@@ -23,6 +23,8 @@
       "favicon": "./assets/favicon.png"
     },
     "description": "Type speed test with random words",
-    "githubUrl": "https://github.com/ShaharEli/FirstApp"
+    "android": {
+      "package": "com.shahareli.typespeedtest"
+    }
   }
 }
