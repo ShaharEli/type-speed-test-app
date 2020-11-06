@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
   StyleSheet,
@@ -7,12 +7,14 @@ import {
   SafeAreaView,
   StatusBar,
   ScrollView,
-  Button,
   Platform,
   Dimensions,
 } from "react-native";
 const { height } = Dimensions.get("window");
 import Test from "./Test";
+import { Button } from "react-native-elements";
+import * as Animatable from "react-native-animatable";
+import AsyncStorage from "@react-native-community/async-storage";
 
 function Game() {
   const [gameCounter, setGameCounter] = useState(0);
@@ -23,9 +25,27 @@ function Game() {
     setGameCounter((prev) => prev + 1);
     setGameOn(true);
   };
-
-  const end = (data) => {
+  useEffect(() => {
+    (async () => {
+      try {
+        setHistory(
+          await AsyncStorage.getItem("history")
+            .split("$#splitingSpot#$")
+            .map((score) => JSON.parse(score))
+        );
+      } catch (e) {}
+    })();
+  }, []);
+  const end = async (data) => {
     setGameOn(false);
+    try {
+      await AsyncStorage.setItem(
+        "scores",
+        JSON.stringify([data, ...history].join("$#splitingSpot#$"))
+      );
+    } catch (e) {
+      // saving error
+    }
     setHistory((prev) => [data, ...prev]);
   };
 
@@ -37,10 +57,18 @@ function Game() {
   return (
     <>
       {!gameOn ? (
-        <View style={{ height: "100%" }}>
+        <Animatable.View animation='fadeInRightBig' style={{ height: "100%" }}>
           <MainContainer>
             <Title>Typing Speed Test</Title>
-            <Button title='Start Test' onPress={start} />
+            <Button
+              title='Start Test'
+              buttonStyle={{
+                paddingHorizontal: 50,
+                paddingVertical: 20,
+                borderRadius: 8,
+              }}
+              onPress={start}
+            />
           </MainContainer>
 
           <ScoreContainer
@@ -62,7 +90,7 @@ function Game() {
                 );
               })}
           </ScoreContainer>
-        </View>
+        </Animatable.View>
       ) : (
         <GameContainer>
           <Text style={{ textAlign: "center" }}>Game number {gameCounter}</Text>

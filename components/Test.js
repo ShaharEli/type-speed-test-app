@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
 import randomWords from "random-words";
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  StatusBar,
-  Button,
-  Platform,
-  TextInput,
-  Alert,
-} from "react-native";
+import { Text, View, Alert } from "react-native";
+import * as Animatable from "react-native-animatable";
+
+import { Button, Input } from "react-native-elements";
+const containerStyle = {
+  height: "100%",
+  flex: 1,
+  alignItems: "center",
+  justifyContent: "space-around",
+  backgroundColor: "#56bcd2",
+};
 
 function Test({ end }) {
   const [time, setTime] = useState(0);
@@ -75,7 +74,7 @@ function Test({ end }) {
   }, [types]);
 
   return (
-    <TestContainer>
+    <Animatable.View animation='fadeInLeftBig' style={containerStyle}>
       <View>
         <Text style={{ color: "red", fontSize: 16 }}>timer: {time}</Text>
       </View>
@@ -97,29 +96,29 @@ function Test({ end }) {
         </Text>
       </View>
       <View style={{ width: "80%" }}>
-        <TextInput
+        <Input
           style={{
             height: 40,
-            borderColor: "black",
-            borderWidth: 1,
-            borderRadius: 8,
           }}
+          type='contained'
           onChangeText={(e) => type(e)}
           placeholder={"Type..."}
         />
       </View>
       <View>
-        <Button onPress={check} style={{ marginTop: 50 }} title='Submit' />
+        <Button
+          onPress={check}
+          buttonStyle={{
+            backgroundColor: len === word.length ? "green" : "red",
+            paddingHorizontal: 40,
+            paddingVertical: 15,
+            borderRadius: 8,
+          }}
+          title='Submit'
+        />
       </View>
-    </TestContainer>
+    </Animatable.View>
   );
 }
 
 export default Test;
-
-const TestContainer = styled.View`
-  height: 100%;
-  flex: 1;
-  align-items: center;
-  justify-content: space-around;
-`;
