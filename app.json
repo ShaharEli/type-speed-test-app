@@ -24,7 +24,8 @@
     },
     "description": "Type speed test with random words",
     "android": {
-      "package": "com.shahareli.typespeedtest"
+      "package": "com.shahareli.typespeedtest",
+      "versionCode": 2
     }
   }
 }
