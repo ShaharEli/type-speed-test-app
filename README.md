@@ -1,5 +1,5 @@
 # type-speed-test-app
-
+My first app in react native and expo cli. \
 In this app you will test your typing skills with random words generated to you.
 
 
