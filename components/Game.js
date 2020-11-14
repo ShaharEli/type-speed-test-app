@@ -28,21 +28,15 @@ function Game() {
   useEffect(() => {
     (async () => {
       try {
-        setHistory(
-          await AsyncStorage.getItem("history")
-            .split("$#splitingSpot#$")
-            .map((score) => JSON.parse(score))
-        );
+        setHistory(JSON.parse(await AsyncStorage.getItem("scores")));
       } catch (e) {}
     })();
   }, []);
   const end = async (data) => {
     setGameOn(false);
     try {
-      await AsyncStorage.setItem(
-        "scores",
-        JSON.stringify([data, ...history].join("$#splitingSpot#$"))
-      );
+      await AsyncStorage.setItem("scores", JSON.stringify([data, ...history]));
+      console.log(JSON.parse(await AsyncStorage.getItem("scores")));
     } catch (e) {
       // saving error
     }
@@ -56,47 +50,54 @@ function Game() {
 
   return (
     <>
-      {!gameOn ? (
-        <Animatable.View animation='fadeInRightBig' style={{ height: "100%" }}>
-          <MainContainer>
-            <Title>Typing Speed Test</Title>
-            <Button
-              title='Start Test'
-              buttonStyle={{
-                paddingHorizontal: 50,
-                paddingVertical: 20,
-                borderRadius: 8,
-              }}
-              onPress={start}
-            />
-          </MainContainer>
-
-          <ScoreContainer
-            scrollEnabled={scrollEnabled}
-            onContentSizeChange={onContentSizeChange}
-            contentContainerStyle={{ alignItems: "center" }}
+      <SafeAreaView style={{ backgroundColor: "#56bcd2", height: "100%" }}>
+        {!gameOn ? (
+          <Animatable.View
+            animation='fadeInRightBig'
+            style={{ height: "100%" }}
           >
-            {history.length > 0 &&
-              history.map((item, index) => {
-                return (
-                  <Score key={index} grade={item.grade / item.word.length}>
-                    <Text>
-                      grade:{item.grade}/{item.word.length} (
-                      {Math.round(item.grade / item.word.length) * 100}%)
-                    </Text>
-                    <Text>word: {item.word}</Text>
-                    <Text>time: {item.time} seconds</Text>
-                  </Score>
-                );
-              })}
-          </ScoreContainer>
-        </Animatable.View>
-      ) : (
-        <GameContainer>
-          <Text style={{ textAlign: "center" }}>Game number {gameCounter}</Text>
-          <Test end={end} />
-        </GameContainer>
-      )}
+            <MainContainer>
+              <Title>Typing Speed Test</Title>
+              <Button
+                title='Start Test'
+                buttonStyle={{
+                  paddingHorizontal: 50,
+                  paddingVertical: 20,
+                  borderRadius: 8,
+                }}
+                onPress={start}
+              />
+            </MainContainer>
+
+            <ScoreContainer
+              scrollEnabled={scrollEnabled}
+              onContentSizeChange={onContentSizeChange}
+              contentContainerStyle={{ alignItems: "center" }}
+            >
+              {history.length > 0 &&
+                history.map((item, index) => {
+                  return (
+                    <Score key={index} grade={item.grade / item.word.length}>
+                      <Text>
+                        grade:{item.grade}/{item.word.length} (
+                        {Math.round(item.grade / item.word.length) * 100}%)
+                      </Text>
+                      <Text>word: {item.word}</Text>
+                      <Text>time: {item.time} seconds</Text>
+                    </Score>
+                  );
+                })}
+            </ScoreContainer>
+          </Animatable.View>
+        ) : (
+          <GameContainer>
+            <Text style={{ textAlign: "center" }}>
+              Game number {gameCounter}
+            </Text>
+            <Test end={end} />
+          </GameContainer>
+        )}
+      </SafeAreaView>
     </>
   );
 }
